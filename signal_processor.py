@@ -242,13 +242,29 @@ class SignalProcessor:
 
 
 
-    def signals_are_different(self, new_signal, old_signal):
-        """Determine if the new signal differs from the previous one."""
-        if not old_signal:
-            return True
-        new_text = new_signal.get("last_signal", {}).get("text")
-        old_text = old_signal.get("last_signal", {}).get("text")
+    def signals_are_different(new_signal, old_signal):
+        """
+        Compare the 'last_signal.text' fields of the new and old signals.
+
+        Only meaningful text is considered (trimmed and lowercased).
+        If the new signal text is blank, it's treated as no valid new signal.
+        
+        Returns:
+            bool: True if the signal text is non-blank and different from the old signal; otherwise, False.
+        """
+        new_text = new_signal.get("last_signal", {}).get("text", "").strip().lower()
+        
+        # If the new signal text is empty, then it's not considered a valid signal change.
+        if not new_text:
+            return False
+
+        # If no old signal exists or its text is blank, then we assume a valid new signal.
+        old_text = ""
+        if old_signal:
+            old_text = old_signal.get("last_signal", {}).get("text", "").strip().lower()
+        
         return new_text != old_text
+
 
     def process_signals_loop(self, sleep_interval=5):
         """Continuously fetch and process signals from Redis."""
