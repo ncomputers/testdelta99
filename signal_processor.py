@@ -242,7 +242,7 @@ class SignalProcessor:
 
 
 
-    def signals_are_different(new_signal, old_signal):
+    def signals_are_different(self, new_signal, old_signal):
         """
         Compare the 'last_signal.text' fields of the new and old signals.
 
@@ -258,12 +258,13 @@ class SignalProcessor:
         if not new_text:
             return False
 
-        # If no old signal exists or its text is blank, then we assume a valid new signal.
+        # If no old signal exists or its text is blank, assume it's a new valid signal.
         old_text = ""
         if old_signal:
             old_text = old_signal.get("last_signal", {}).get("text", "").strip().lower()
         
         return new_text != old_text
+
 
 
     def process_signals_loop(self, sleep_interval=5):
